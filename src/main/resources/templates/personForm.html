@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhml" xmlns:th="http://www.thymeleaf.org">
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet"
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+            integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+            crossorigin="anonymous">
+
+        <link rel="stylesheet"
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+            integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+            crossorigin="anonymous">
+
+        <link rel="stylesheet" href="/dist/styles/webawesome.css" />
+
+        <script src="https://kit.webawesome.com/9fcf948dbdcc4bed.js" crossorigin="anonymous"></script>
+        <script src="https://kit.fontawesome.com/c955a53ade.js" crossorigin="anonymous"></script>
+
+        <title>Liste des personnes/utilisateurs liée à la compta</title>
+        <style>
+            body {
+                padding-top: 50px;
+            }
+            .special {
+                padding-top:50px;
+            }
+            #modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100%;
+                width: 100%;
+                background-color: rgba(0,0,0,.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .modal__window {
+                position: relative;
+                background-color: white;
+                padding: 4em 2em;
+            }
+
+            .modal__close {
+                position: absolute;
+                top: -30px;
+                right: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="./"><i class="fa-solid fa-house"></i></a>
+                </div>
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="./personne">Système de gestion des personnes</a>
+                </div>
+            </div>
+        </nav>
+        <div class="container special">
+            <h2 class="h2">Liste des personnes</h2>
+            <div class="table-responsive">
+                <table class="table table-striped table-sm">
+                    <thead>
+                        <tr>
+                            <th>Prénom</th>
+                            <th>Nom</th>
+                            <th>Email</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${personnes.empty}">
+                            <td colspan="3">Aucune personne en base de données</td>
+                        </tr>
+                        <tr th:each="personne: ${personnes}">
+                            <td><span th:text="${personne.prenom}"> Prénom </span></td>
+                            <td><span th:text="${personne.nom}"> Nom </span></td>
+                            <td><span th:text="${personne.mail}"> Email </span></td>
+                            <td><a th:href="@{/personne/updatePersonne/{id}(id=${personne.id})}"><button class="btn btn-info">Modifier</button></a>
+                            <a th:href="@{/personne/deletePersonne/{id}(id=${personne.id})}"><button class="btn btn-danger">Supprimer</button></a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <h4><a th:href="@{/personne/createPersonne}">Ajouter une nouvelle personne</a></h4>
+        </div>
+        <div th:if="${newPerson}" id = "modal" class="container special">
+
+        <div class="modal__window">
+            <a class="modal__close" href="../personne"><i class="fa-solid fa-xmark-large"></i></a>
+            <h2 class="h2">Ajout d'une nouvelle personne</h2>
+            <div>
+                <form method="post"
+                    th:action="@{/personne/savePersonne}" th:object="${person}">
+                    <div class="form-group">
+                        <label for="firstNameInput">Prénom</label> 
+                        <input
+                            type="text" th:field="*{prenom}" class="form-control" id="firstNameInput"
+                            aria-describedby="firstNameHelp" placeholder="Saisir le prénom"> <small
+                            id="firstNameHelp" class="form-text text-muted">Merci d'écrire le prénom de la personne.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastNameInput">Nom</label> 
+                        <input
+                            type="text" th:field="*{nom}" class="form-control" id="lastNameInput"
+                            aria-describedby="lastNameHelp" placeholder="Saisir le nom"> <small
+                            id="lastNameHelp" class="form-text text-muted">Merci d'écrire le nom de la personne.</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="mailInput">Email</label> 
+                        <input
+                            type="text" th:field="*{mail}" class="form-control" id="mailInput"
+                            aria-describedby="mailHelp" placeholder="Saisir l'adresse email"> <small
+                            id="mailHelp" class="form-text text-muted">Merci d'écrire l'adresse email de la personne.</small>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Créer</button>
+                </form>
+            </div>
+        </div>
+        </div>
+
+        <script
+            src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script
+            src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+            crossorigin="anonymous"></script>
+    </body>
+</html>
