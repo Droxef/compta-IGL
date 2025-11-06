@@ -1,0 +1,11 @@
+package ch.igl.compta.repository.api;
+
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
+
+import ch.igl.compta.model.ComptaEntity;
+
+@Repository
+public interface ComptaRepository extends CrudRepository<ComptaEntity, Long> {
+
+}
