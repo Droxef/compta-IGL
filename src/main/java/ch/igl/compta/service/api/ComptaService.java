@@ -6,7 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ch.igl.compta.model.ComptaEntity;
-import ch.igl.compta.repository.api.ComptaRepository;
+import ch.igl.compta.repository.api.compta.ComptaCompteRepository;
+import ch.igl.compta.repository.api.compta.ComptaGroupeRepository;
+import ch.igl.compta.repository.api.compta.ComptaPlanRepository;
+import ch.igl.compta.repository.api.compta.ComptaRepository;
 import lombok.Data;
 
 @Data
@@ -15,6 +18,15 @@ public class ComptaService {
 
     @Autowired
     private ComptaRepository comptaRepository;
+
+    @Autowired
+    private ComptaCompteRepository comptaCompteRepository;
+
+    @Autowired
+    private ComptaGroupeRepository comptaGroupeRepository;
+
+    @Autowired
+    private ComptaPlanRepository comptaPlanRepository;
 
     public Optional<ComptaEntity> getComptaEntity(final Long id) {
         return comptaRepository.findById(id);

@@ -1,4 +1,4 @@
-package ch.igl.compta.repository.api;
+package ch.igl.compta.repository.api.compta;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

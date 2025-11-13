@@ -12,4 +12,9 @@ public class WebController {
     public String home(Model model) {
         return "home";
     }
+
+    @GetMapping("/login")
+    public String login(Model model) {
+        return "home";
+    }
 }

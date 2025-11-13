@@ -13,32 +13,32 @@ import ch.igl.compta.model.ComptaEntity;
 import ch.igl.compta.service.api.ComptaService;
 
 @RestController
-@RequestMapping("/api/v1/test/")
+@RequestMapping("/api/v1/test/compta")
 public class ComptaController {
 
     @Autowired
     private ComptaService comptaService;
 
-    @GetMapping("/")
-    public String index() {
-        return "Greetings from Spring Boot!";
-    }
+    ///////// Lines /////////////
 
-    @GetMapping("/hello")
-    public String hello(@RequestParam(value = "name", defaultValue = "World") String name) {
-        return String.format("Hello %s!", name);
-    }
-
-    @GetMapping("/compta")
+    @GetMapping("")
     public Iterable<ComptaEntity> getLines() {
         return comptaService.getComptaEntities();
     }
 
-    @GetMapping("/compta/byYear/{year}")
+    @GetMapping("/byYear/{year}")
     public void getLinesByYear(@PathVariable int year) {
       throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "Not yet finished");
     }
 
+    ////////// Plan /////////////////
+
+
+    ////////// Compte /////////////
+    
+
+    
+    ////////// Groupe ////////////
     /*
      * @PostMapping()
   @ResponseStatus(HttpStatus.CREATED)

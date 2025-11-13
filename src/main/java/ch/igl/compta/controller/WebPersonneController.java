@@ -52,7 +52,7 @@ public class WebPersonneController {
     }
 
     @PostMapping("/savePersonne")
-    public ModelAndView saveEmployee(@ModelAttribute Personne personne, BindingResult bresult, RedirectAttributes redirectAttribute) {
+    public ModelAndView saveEmployee(Model model, @ModelAttribute Personne personne, BindingResult bresult, RedirectAttributes redirectAttribute) {
         personneService.savePersonne(personne);
         return new ModelAndView("redirect:/personne");
     }
@@ -76,15 +76,15 @@ public class WebPersonneController {
     
     @GetMapping("/updatePersonne/{id}")
 	public String createEmployee(HttpServletRequest request, Model model, @ModelAttribute List<Personne> personneList, @PathVariable("id") final int id) {
-        if(request.getSession().getAttribute("personneList") != null) {
+/*        if(request.getSession().getAttribute("personneList") != null) {
             model.addAttribute("personnes", request.getSession().getAttribute("personneList"));
             request.getSession().removeAttribute("personneList");
         } else {
             model.addAttribute("personnes", personneList);
-        }
+        }*/
 		Personne p = personneService.getPersonne(id);
 		model.addAttribute("person", p);
-        model.addAttribute("newPerson", true);
+        model.addAttribute("updatePerson", true);
 		return "personForm";
 	}
 }

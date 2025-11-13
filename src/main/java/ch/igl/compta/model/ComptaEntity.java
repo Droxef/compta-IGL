@@ -19,7 +19,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "comptaLines")
+@Table(name = "ComptaLines")
 public class ComptaEntity {
 
     @Id

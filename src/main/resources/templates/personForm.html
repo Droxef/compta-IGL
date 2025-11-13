@@ -92,14 +92,16 @@
             </div>
             <h4><a th:href="@{/personne/createPersonne}">Ajouter une nouvelle personne</a></h4>
         </div>
-        <div th:if="${newPerson}" id = "modal" class="container special">
+        <div th:if="${newPerson} or ${updatePerson}" id = "modal" class="container special">
 
         <div class="modal__window">
-            <a class="modal__close" href="../personne"><i class="fa-solid fa-xmark-large"></i></a>
-            <h2 class="h2">Ajout d'une nouvelle personne</h2>
+            <a class="modal__close" th:href="@{/personne}"><i class="fa-solid fa-xmark-large"></i></a>
+            <h2 class="h2" th:if="${updatePerson}">Modification d'une personne</h2>
+            <h2 class="h2" th:unless="${updatePerson}">Ajout d'une nouvelle personne</h2>
             <div>
                 <form method="post"
                     th:action="@{/personne/savePersonne}" th:object="${person}">
+                    <input type="hidden" th:field="*{id}" id="idInput">
                     <div class="form-group">
                         <label for="firstNameInput">Prénom</label> 
                         <input
@@ -122,7 +124,7 @@
                             id="mailHelp" class="form-text text-muted">Merci d'écrire l'adresse email de la personne.</small>
                     </div>
                     
-                    <button type="submit" class="btn btn-primary">Créer</button>
+                    <button type="submit" class="btn btn-primary" th:text="${newPerson} ? Créer : Modifier"></button>
                 </form>
             </div>
         </div>

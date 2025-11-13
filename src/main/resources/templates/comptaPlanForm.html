@@ -31,6 +31,11 @@
             .special {
                 padding-top: 50px;
             }
+
+            a.active {
+                color: red !important;
+                text-decoration: underline;
+            }
         </style>
     </head>
 
@@ -41,26 +46,28 @@
             </a>
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="./"><i class="fa-solid fa-house"></i></a>
+                    <a class="navbar-brand" href="/"><i class="fa-solid fa-house"></i></a>
                 </div>
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="./personne">Système de gestion des personnes</a>
+                    <a class="navbar-brand" href="/personne">Système de gestion des personnes</a>
                 </div>
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="./compta">Système de gestion de la comptabilité</a>
+                    <a class="navbar-brand" href="/compta">Système de gestion de la comptabilité</a>
                 </div>
             </div>
         </nav>
-        <h1 class="title">IGL app</h1>
-        <div>Please Login before doing any action</div>
-        <div id="name"><span>User: </span><input type="text"></div>
-        <div id="pwd"><span>MDP: </span><input type="password"></div>
-        <p id="currentTime"></p>
-        <script src="script.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-            crossorigin="anonymous"></script>
+        <nav class="navbar navbar-expand-sm static-top p1-primary">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/compta/search">Recherche des écritures</i></a>
+                </div>
+                <div class="navbar-header">
+                    <a class="navbar-brand active" href="/compta/plan">Gestion des plans</a>
+                </div>
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/compta/config">Configuration</a>
+                </div>
+            </div>
+        </nav>
     </body>
-
 </html>
