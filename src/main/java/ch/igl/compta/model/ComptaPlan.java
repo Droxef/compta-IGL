@@ -2,11 +2,15 @@ package ch.igl.compta.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -21,6 +25,9 @@ import lombok.Data;
 @Data
 @Entity
 @Table
+@JsonIdentityInfo(
+  generator = ObjectIdGenerators.PropertyGenerator.class, 
+  property = "id")
 public class ComptaPlan {
 
     @Id
@@ -43,8 +50,14 @@ public class ComptaPlan {
     private String name;
 
     @OneToMany(targetEntity=ComptaCompte.class, cascade=CascadeType.ALL, mappedBy="plan")
-    private Set<ComptaCompte> comptes;
+    //@JsonManagedReference
+    private List<ComptaCompte> comptes;
 
+    @JsonManagedReference
     @OneToMany(targetEntity=ComptaCompteGroupe.class, cascade=CascadeType.ALL, mappedBy="plan")
-    private Set<ComptaCompteGroupe> groupes;
+    private List<ComptaCompteGroupe> groupes;
+
+    public boolean validateData() {
+        return true;
+    }
 }

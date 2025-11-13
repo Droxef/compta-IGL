@@ -7,6 +7,11 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,6 +27,9 @@ import lombok.Data;
 @Data
 @Entity
 @Table
+@JsonIdentityInfo(
+  generator = ObjectIdGenerators.PropertyGenerator.class, 
+  property = "id")
 public class ComptaCompteGroupe {
 
     @Id
@@ -41,17 +49,21 @@ public class ComptaCompteGroupe {
 
     private String description;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name="planId")
     private ComptaPlan plan;
 
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name="parentId")
     private ComptaCompteGroupe parent;
 
+    @JsonManagedReference
     @OneToMany(targetEntity=ComptaCompteGroupe.class, cascade=CascadeType.ALL, mappedBy="parent")
     private Set<ComptaCompteGroupe> children;
 
+    //@JsonManagedReference
     @OneToMany(targetEntity=ComptaCompte.class, cascade=CascadeType.ALL, mappedBy="groupe")
     private Set<ComptaCompte> comptes;
 }

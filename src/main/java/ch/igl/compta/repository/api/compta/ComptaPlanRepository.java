@@ -15,6 +15,7 @@ public interface ComptaPlanRepository extends CrudRepository<ComptaPlan, Long> {
 
     @Query("select a from ComptaPlan a where a.startDate <= :year and a.endDate > :year")
     public Optional<ComptaPlan> findByYear(@Param("year") LocalDate year);
+    public Optional<ComptaPlan> findByName(String name);
 
     public Optional<ComptaPlan> findByStartDateGreaterThanAndEndDateAfter(LocalDate yearStart, LocalDate yearEnd);
 }

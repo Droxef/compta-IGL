@@ -106,6 +106,15 @@ public class ComptaService {
         }
     }
 
+    public ComptaPlan getPlanByName(final String name) {
+        Optional<ComptaPlan> plan = comptaPlanRepository.findByName(name);
+        if(plan.isPresent()) {
+            return plan.get();
+        } else {
+            return null;
+        }
+    }
+
     public Iterable<ComptaCompte> getCompteByYear(final int year) {
         LocalDate yearDate = LocalDate.of(year, 1, 1);
         Optional<ComptaPlan> plan = comptaPlanRepository.findByYear(yearDate);
@@ -168,20 +177,56 @@ public class ComptaService {
         return ce;
     }
 
-    public void deletePlan(final Long id) {
-        comptaPlanRepository.deleteById(id);
+    public ComptaPlan deletePlan(final long id) {
+        if(id <= 0) {
+            return null;
+        }
+        Optional<ComptaPlan> plan = comptaPlanRepository.findById(id);
+        if(plan.isPresent()) {
+            comptaPlanRepository.delete(plan.get());
+            return plan.get();
+        } else {
+            return null;
+        }
     }
 
-    public void deleteGroupe(final Long id) {
-        comptaGroupeRepository.deleteById(id);
+    public ComptaCompteGroupe deleteGroupe(final long id) {
+        if(id <= 0) {
+            return null;
+        }
+        Optional<ComptaCompteGroupe> groupe = comptaGroupeRepository.findById(id);
+        if(groupe.isPresent()) {
+            comptaGroupeRepository.delete(groupe.get());
+            return groupe.get();
+        } else {
+            return null;
+        }
     }
 
-    public void deleteCompte(final Long id) {
-        comptaCompteRepository.deleteById(id);
+    public ComptaCompte deleteCompte(final long id) {
+        if(id <= 0) {
+            return null;
+        }
+        Optional<ComptaCompte> compte = comptaCompteRepository.findById(id);
+        if(compte.isPresent()) {
+            comptaCompteRepository.delete(compte.get());
+            return compte.get();
+        } else {
+            return null;
+        }
     }
 
-    public void deleteLine(final Long id) {
-        comptaRepository.deleteById(id);
+    public ComptaEntity deleteLine(final long id) {
+        if(id <= 0) {
+            return null;
+        }
+        Optional<ComptaEntity> line = comptaRepository.findById(id);
+        if(line.isPresent()) {
+            comptaRepository.delete(line.get());
+            return line.get();
+        } else {
+            return null;
+        }
     }
 
     public boolean validateBusiness(ComptaPlan plan) {
