@@ -1,6 +1,10 @@
 package ch.igl.compta.model;
 
-// import org.springframework.data.annotation.Id;
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SourceType;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,6 +26,12 @@ public class Personne {
 
     @Version
     private Long version;
+
+    @CreationTimestamp(source = SourceType.DB)
+    private LocalDateTime dateCreation;
+
+    @UpdateTimestamp(source = SourceType.DB)
+    private LocalDateTime dateModification;
 
     private String prenom;
     private String nom;
