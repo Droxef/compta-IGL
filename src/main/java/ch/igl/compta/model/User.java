@@ -11,17 +11,17 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 import jakarta.persistence.Version;
 import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "comptaLines")
-public class ComptaEntity {
+@Table
+public class User {
 
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,34 +35,13 @@ public class ComptaEntity {
     @UpdateTimestamp(source = SourceType.DB)
     private LocalDateTime dateModification;
 
-    private LocalDateTime dateQuittance;
+    private String userName;
 
-    private Double ammount;
+    private String passHash;
 
-    private String libele;
+    private String email;
 
-    private transient String ownerStr;
-
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name="personneId")
-    private Personne owner;
-
-    @ManyToOne
-    @JoinColumn(name="compteInId")
-    private ComptaCompte compteIn;
-
-    @Transient
-    private transient String descriptionInTR;
-
-    @ManyToOne
-    @JoinColumn(name="compteOutId")
-    private ComptaCompte compteOut;
-
-    @Transient
-    private transient String descriptionOutTR;
-
-    @ManyToOne
-    @JoinColumn(name="centreChargeId")
-    private CentreCharge centreCharge;
-
+    private Personne personne;
 }

@@ -1,5 +1,6 @@
 package ch.igl.compta.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,16 +23,16 @@ import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/personne")
-@SessionAttributes("personneList")
+@SessionAttributes("personnes")
 public class WebPersonneController {
 
 
     @Autowired
     private PersonneServiceWeb personneService;
 
-    @ModelAttribute("personneList")
+    @ModelAttribute("personnes")
     public Iterable<Personne> personneList() {
-        return personneService.getAllPersonnes();
+        return new ArrayList<>(); // personneService.getAllPersonnes();
     }
 
     @GetMapping("")
@@ -39,8 +40,8 @@ public class WebPersonneController {
         Iterable<Personne> personnes = personneService.getAllPersonnes();
         model.addAttribute("personnes", personnes);
         // TODO understand this (only for redirect i think)
-        attribute.addAttribute("personneList", personnes);
-        request.getSession().setAttribute("personneList", personnes);
+        attribute.addAttribute("personnes", personnes);
+        //request.getSession().setAttribute("personneList", new ArrayList<Personne>((ArrayList) personnes));
         return "personForm";
     }
 
@@ -57,14 +58,31 @@ public class WebPersonneController {
     }
     
     @GetMapping("/createPersonne")
-	public String createEmployee(HttpServletRequest request, Model model, @ModelAttribute List<Personne> personneList) {
+	public String createEmployee(HttpServletRequest request, Model model, @ModelAttribute Iterable<Personne> personnes, RedirectAttributes attribute) {
+        if(personnes == null || !(personnes instanceof ArrayList)) {
+//            personnes = (Iterable<Personne>) model.getAttribute("personnes");
+        }
+        /*        if(request.getSession().getAttribute("personneList") != null) {
+            model.addAttribute("personnes", request.getSession().getAttribute("personneList"));
+            request.getSession().removeAttribute("personneList");
+        } else {*/
+//            model.addAttribute("personnes", personnes);
+//        }
+		Personne p = new Personne();
+		model.addAttribute("person", p);
+        model.addAttribute("newPerson", true);
+		return "personForm";
+	}
+    
+    @GetMapping("/updatePersonne/{id}")
+	public String createEmployee(HttpServletRequest request, Model model, @ModelAttribute List<Personne> personneList, @PathVariable("id") final int id) {
         if(request.getSession().getAttribute("personneList") != null) {
             model.addAttribute("personnes", request.getSession().getAttribute("personneList"));
             request.getSession().removeAttribute("personneList");
         } else {
             model.addAttribute("personnes", personneList);
         }
-		Personne p = new Personne();
+		Personne p = personneService.getPersonne(id);
 		model.addAttribute("person", p);
         model.addAttribute("newPerson", true);
 		return "personForm";

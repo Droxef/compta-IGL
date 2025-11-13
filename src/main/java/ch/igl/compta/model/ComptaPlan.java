@@ -1,26 +1,27 @@
 package ch.igl.compta.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 import jakarta.persistence.Version;
 import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "comptaLines")
-public class ComptaEntity {
+@Table
+public class ComptaPlan {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,34 +36,15 @@ public class ComptaEntity {
     @UpdateTimestamp(source = SourceType.DB)
     private LocalDateTime dateModification;
 
-    private LocalDateTime dateQuittance;
+    private LocalDate startDate;
 
-    private Double ammount;
+    private LocalDate endDate;
 
-    private String libele;
+    private String name;
 
-    private transient String ownerStr;
+    @OneToMany(targetEntity=ComptaCompte.class, cascade=CascadeType.ALL, mappedBy="plan")
+    private Set<ComptaCompte> comptes;
 
-    @ManyToOne
-    @JoinColumn(name="personneId")
-    private Personne owner;
-
-    @ManyToOne
-    @JoinColumn(name="compteInId")
-    private ComptaCompte compteIn;
-
-    @Transient
-    private transient String descriptionInTR;
-
-    @ManyToOne
-    @JoinColumn(name="compteOutId")
-    private ComptaCompte compteOut;
-
-    @Transient
-    private transient String descriptionOutTR;
-
-    @ManyToOne
-    @JoinColumn(name="centreChargeId")
-    private CentreCharge centreCharge;
-
+    @OneToMany(targetEntity=ComptaCompteGroupe.class, cascade=CascadeType.ALL, mappedBy="plan")
+    private Set<ComptaCompteGroupe> groupes;
 }
