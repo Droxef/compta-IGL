@@ -61,7 +61,7 @@ public class PersonneProxy {
             HttpMethod.PUT,
             request,
             Personne.class);
-        log.debug("create personne call " + response.getStatusCode().toString());
+        log.debug("modify personne call " + response.getStatusCode().toString());
 
         return response.getBody();
     }

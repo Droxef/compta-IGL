@@ -17,15 +17,26 @@
         <link rel="icon" href="/icon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.webmanifest" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
         <script src="https://kit.webawesome.com/9fcf948dbdcc4bed.js" crossorigin="anonymous"></script>
         <script src="https://kit.fontawesome.com/c955a53ade.js" crossorigin="anonymous"></script>
+        <script
+            src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 
         <title>IGL compta webapp</title>
         <link rel="stylesheet" href="styles.css" />
         <style>
             body {
                 padding-top: 50px;
+            }
+
+            html {
+                font-size: 16px !important;
+            }
+
+            nav.margin-top {
+                margin-top: 0.5rem;
             }
 
             .special {
@@ -36,38 +47,250 @@
                 color: red !important;
                 text-decoration: underline;
             }
+            #modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100%;
+                width: 100%;
+                background-color: rgba(0,0,0,.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .modal__window {
+                position: relative;
+                background-color: white;
+                padding: 4em 2em;
+            }
+
+            .modal__close {
+                position: absolute;
+                top: -30px;
+                right: 0;
+            }
         </style>
     </head>
 
     <body>
-        <nav class="navbar navbar-inverse navbar-fixed-top">
-            <a class="navbar-brand" href="">
-                <img th:src="@{images/Logo.svg}" width="30" alt="logo" />
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+            <a class="navbar-brand me-5" href="#">
+                <img th:src="@{/images/Logo.svg}" width="40" alt="logo" />
             </a>
             <div class="container">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="/"><i class="fa-solid fa-house"></i></a>
-                </div>
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="/personne">Système de gestion des personnes</a>
-                </div>
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="/compta">Système de gestion de la comptabilité</a>
-                </div>
+                
+                <!-- Links always visible, no collapse -->
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="fa-solid fa-house me-1"></i> Accueil
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/personne">Système de gestion des personnes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/compta">Système de gestion de la comptabilité</a>
+                    </li>
+                </ul>
             </div>
         </nav>
-        <nav class="navbar navbar-expand-sm static-top p1-primary">
+        <nav class="navbar navbar-expand-sm margin-top bg-light">
             <div class="container">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="/compta/search">Recherche des écritures</i></a>
-                </div>
-                <div class="navbar-header">
-                    <a class="navbar-brand active" href="/compta/plan">Gestion des plans</a>
-                </div>
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="/compta/config">Configuration</a>
-                </div>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/compta/search">Recherche des écritures</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/compta/plan">Gestion des plans</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/compta/config">Configuration</a>
+                    </li>
+                </ul>
             </div>
         </nav>
+
+        <div class="container mt-4">
+            <!-- Menu déroulant des plans -->
+            <form th:action="@{/compta/plan/change}" method="post" id="planForm">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <label for="planSelect" class="form-label">Sélectionner un plan :</label>
+                        <select id="planSelect" name="planId" class="form-select" onchange="this.form.submit()">
+                            <option th:each="info : ${planInfos}"
+                                    th:value="${info.first}"
+                                    th:text="${info.second}"
+                                    th:selected="${planActif != null && planActif.id == info.first}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+            <!--
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <label for="planSelect" class="form-label">Sélectionner un plan :</label>
+                    <select id="planSelect" class="form-select" th:onchange="changePlanActif(this)">
+                        <option th:each="info : ${planInfos}"
+                                th:value="${info.first}"
+                                th:text="${info.second}"
+                                th:selected="${planActif != null && planActif.id == info.first}">
+                        </option>
+                    </select>
+                </div>
+            </div> -->
+
+            <h4><a th:href="@{/compta/plan/create}">Ajouter un nouveau plan</a></h4>
+
+            <!-- Tableau des infos du plan actif -->
+            <div class="row">
+                <div class="col-md-12">
+                    <h3>Détails du plan actif</h3>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Date début</th>
+                                <th>Date fin</th>
+                                <th>Est actif</th>
+                                <th>Métadonnées</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:if="${planActif != null}">
+                                <td th:text="${planActif.name}"></td>
+                                <td th:text="${planActif.startDate}"></td>
+                                <td th:text="${planActif.endDate}"></td>
+                                <td>
+                                    <span th:if="${planActif.isOpen}" class="badge bg-success">Oui</span>
+                                    <span th:unless="${planActif.isOpen}" class="badge bg-danger">Non</span>
+                                </td>
+                                <td>
+                                    <span th:if="${planActif.dateCreation != null}"
+                                        th:title="${planActif.dateCreation}"
+                                        data-bs-toggle="tooltip"
+                                        style="cursor: pointer; text-decoration: underline dotted;">
+                                        Voir les métadonnées
+                                    </span>
+                                    <span th:unless="${planActif.dateCreation != null}">Aucune</span>
+                                </td>
+                                <td>
+                                    <a th:if="${planActif.isOpen}" th:href="@{/compta/plan/close}"><button class="btn btn-info">Fermer</button></a>
+                                    <a th:href="@{/compta/plan/delete}"><button class="btn btn-danger">Supprimer</button></a>
+                                </td>
+                            </tr>
+                            <tr th:unless="${planActif != null}">
+                                <td colspan="5" class="text-center">Aucun plan sélectionné</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                            <div th:if="${planActif != null}">
+                                <a th:href="@{/compta/plan/comptes}"><button class="btn btn-info">Voir les comptes</button></a>
+                                <a th:href="@{/compta/plan/entries}"><button class="btn btn-info">Voir les ecritures</button></a>
+                            </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${newPlan} or ${updatePlan}" id = "modal" class="container special">
+
+            <div class="modal__window">
+                <a class="modal__close" th:href="@{/compta/plan}"><i class="fa-solid fa-xmark fa-2x"></i></a>
+                <h2 class="h2" th:if="${updatePlan}">Modification d'un plan</h2>
+                <h2 class="h2" th:unless="${updatePlan}">Ajout d'un nouveau plan</h2>
+                <div>
+                    <form method="post"
+                        th:action="@{/compta/savePlan}" th:object="${plan}">
+                        <input type="hidden" th:field="*{id}" id="idInput">
+                        <div class="form-group">
+                            <label for="nameInput">Nom</label> 
+                            <input
+                                type="text" th:field="*{name}" class="form-control" id="nameInput"
+                                aria-describedby="nameHelp" placeholder="Saisir le nom"> <small
+                                id="nameHelp" class="form-text text-muted">Indiquez le nom du plan (usuellement, l'année).</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="startDateInput">Date de début</label> 
+                            <!-- TODO format input date-->
+                            <input
+                                type="date" th:field="*{startDate}" class="form-control" id="startDateInput"
+                                aria-describedby="startDateHelp" placeholder="Saisir la date de début"> <small
+                                id="startDateHelp" class="form-text text-muted">Merci d'entrer la date de début.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="endDateInput">Date de fin</label> 
+                            <input
+                                type="date" th:field="*{endDate}" class="form-control" id="endDateInput"
+                                aria-describedby="endDateHelp" placeholder="Saisir la date de fin"> <small
+                                id="endDateHelp" class="form-text text-muted">Merci d'entrer la date de fin.</small>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" th:text="${newPlan} ? Créer : Modifier"></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    <!-- Script pour gérer le changement de plan -->
+    <script>
+        function changePlanActif(selectElement) {
+            const planId = selectElement.value;
+            // Envoi de la requête pour changer le plan actif (Spring ou TypeScript)
+            fetch(`/compta/plan/change?planId=${planId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error("Erreur réseau");
+                return response.json();
+            })
+            .then(planActif => {
+                // Mise à jour dynamique du tableau
+                document.getElementById('planNom').textContent = planActif.nom;
+                document.getElementById('planDateDebut').textContent = planActif.dateDebut;
+                document.getElementById('planDateFin').textContent = planActif.dateFin;
+
+                // Mise à jour du badge "Est actif"
+                const badge = document.getElementById('planEstActif');
+                badge.innerHTML = planActif.actif ?
+                    '<span class="badge bg-success">Oui</span>' :
+                    '<span class="badge bg-danger">Non</span>';
+
+                // Mise à jour des métadonnées
+                const metadataSpan = document.getElementById('planMetadata');
+                if (planActif.metadata) {
+                    metadataSpan.innerHTML = `
+                        <span title="${planActif.metadata}" data-bs-toggle="tooltip" style="cursor: pointer; text-decoration: underline dotted;">
+                            Voir les métadonnées
+                        </span>
+                    `;
+                    // Réinitialise le tooltip (si Bootstrap est utilisé)
+                    new bootstrap.Tooltip(metadataSpan.querySelector('span'));
+                } else {
+                    metadataSpan.innerHTML = 'Aucune';
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert("Erreur lors de la requête.");
+            });
+        }
+
+        // Initialisation des tooltips (si Bootstrap est utilisé)
+        document.addEventListener('DOMContentLoaded', function() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    </script>
+
+    <!-- Intégration de Bootstrap JS (optionnel, pour les tooltips) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

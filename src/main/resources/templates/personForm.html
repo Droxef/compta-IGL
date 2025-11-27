@@ -95,7 +95,7 @@
         <div th:if="${newPerson} or ${updatePerson}" id = "modal" class="container special">
 
         <div class="modal__window">
-            <a class="modal__close" th:href="@{/personne}"><i class="fa-solid fa-xmark-large"></i></a>
+            <a class="modal__close" th:href="@{/personne}"><i class="fa-solid fa-xmark fa-2x"></i></a>
             <h2 class="h2" th:if="${updatePerson}">Modification d'une personne</h2>
             <h2 class="h2" th:unless="${updatePerson}">Ajout d'une nouvelle personne</h2>
             <div>
