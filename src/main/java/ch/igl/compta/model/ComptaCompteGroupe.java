@@ -9,6 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
@@ -49,21 +50,27 @@ public class ComptaCompteGroupe {
 
     private String description;
 
-    @JsonBackReference
+//    @JsonBackReference
     @ManyToOne
     @JoinColumn(name="planId")
     private ComptaPlan plan;
 
-    @JsonBackReference
+//    @JsonBackReference
     @ManyToOne
     @JoinColumn(name="parentId")
     private ComptaCompteGroupe parent;
 
-    @JsonManagedReference
+//    @JsonManagedReference
     @OneToMany(targetEntity=ComptaCompteGroupe.class, cascade=CascadeType.ALL, mappedBy="parent")
+    @JsonIdentityReference(alwaysAsId = true)
     private Set<ComptaCompteGroupe> children;
 
-    //@JsonManagedReference
+//    @JsonManagedReference
     @OneToMany(targetEntity=ComptaCompte.class, cascade=CascadeType.ALL, mappedBy="groupe")
+    @JsonIdentityReference(alwaysAsId = true)
     private Set<ComptaCompte> comptes;
+
+    public boolean validateData() {
+        return true;
+    }
 }

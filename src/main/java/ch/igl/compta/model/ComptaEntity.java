@@ -6,7 +6,9 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.Entity;
@@ -55,6 +57,7 @@ public class ComptaEntity {
 
     @ManyToOne
     @JoinColumn(name="compteInId")
+//    @JsonBackReference
     private ComptaCompte compteIn;
 
     @Transient
@@ -62,6 +65,7 @@ public class ComptaEntity {
 
     @ManyToOne
     @JoinColumn(name="compteOutId")
+//    @JsonBackReference
     private ComptaCompte compteOut;
 
     @Transient

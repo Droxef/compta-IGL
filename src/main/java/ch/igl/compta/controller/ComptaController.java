@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import ch.igl.compta.model.ComptaCompte;
+import ch.igl.compta.model.ComptaCompteGroupe;
 import ch.igl.compta.model.ComptaEntity;
 import ch.igl.compta.model.ComptaPlan;
 import ch.igl.compta.service.api.ComptaService;
@@ -50,9 +51,19 @@ public class ComptaController {
 
     ////////// Plan /////////////////
     @GetMapping("/plan")
-    public Iterable<ComptaPlan> getPlans() {
-        return comptaService.getPlans();
+    public Iterable<ComptaPlan> getPlans(@RequestParam(required=false) Boolean open) {
+        if(open != null) {
+            return comptaService.getPlansActif(open);
+        } else {
+            return comptaService.getPlans();
+        }
     }
+
+    @GetMapping("/plan/actif")
+    public ComptaPlan getPlanActif() {
+        return comptaService.getLastPlanActif();
+    }
+    
   
     @GetMapping("/plan/{id}")
     public ComptaPlan getPlanById(@PathVariable int id) {
@@ -104,6 +115,7 @@ public class ComptaController {
     public ComptaPlan savePlan(@PathVariable int id, @Valid @RequestBody ComptaPlan plan) {
         ComptaPlan oldPlan = comptaService.getPlanById(id);
         // TODO map plan to oldPlan
+        oldPlan.setOpen(plan.isOpen());
         return comptaService.updatePlan(oldPlan);
     }
 
@@ -117,6 +129,12 @@ public class ComptaController {
     public Iterable<ComptaCompte> getComptesByPlan(@PathVariable int id) {
         ComptaPlan plan = comptaService.getPlanById(id);
         return plan.getComptes();
+    }
+
+    @GetMapping("plan/{id}/groupe")
+    public Iterable<ComptaCompteGroupe> getGroupesByPlan(@PathVariable int id) {
+        ComptaPlan plan = comptaService.getPlanById(id);
+        return plan.getGroupes();
     }
     
 
@@ -164,7 +182,7 @@ public class ComptaController {
     }
 
     @PostMapping("/compte")
-    public ComptaCompte addPlan(@Valid @RequestBody ComptaCompte compte, BindingResult results) {
+    public ComptaCompte addCompte(@Valid @RequestBody ComptaCompte compte, BindingResult results) {
         if(results.hasErrors()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, results.getAllErrors().get(0).getDefaultMessage());
         }
@@ -189,7 +207,7 @@ public class ComptaController {
     }
     
     @PutMapping("compte/{id}")
-    public ComptaCompte savePlan(@PathVariable int id, @Valid @RequestBody ComptaCompte plan) {
+    public ComptaCompte saveCompte(@PathVariable int id, @Valid @RequestBody ComptaCompte plan) {
         ComptaCompte oldCompte = comptaService.getCompteById(id);
         // TODO map plan to oldPlan
         return comptaService.updateCompte(oldCompte);
@@ -204,6 +222,53 @@ public class ComptaController {
     
     ////////// Groupe ////////////
     /// 
+    @GetMapping("/groupe")
+    public Iterable<ComptaCompteGroupe> getGroupes() {
+        return comptaService.getGroupes();
+    }
+  
+    @GetMapping("/groupe/{id}")
+    public ComptaCompteGroupe getGroupeById(@PathVariable int id) {
+        return comptaService.getGroupeById(id);
+    }
+
+    @PostMapping("/groupe")
+    public ComptaCompteGroupe addGroupe(@Valid @RequestBody ComptaCompteGroupe groupe, BindingResult results) {
+        if(results.hasErrors()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, results.getAllErrors().get(0).getDefaultMessage());
+        }
+        if(groupe.getId() != null && groupe.getId() > 0) {
+            // Error because personne is already saved
+            if(comptaService.getGroupeById(groupe.getId()) != null) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Data exist already");
+            }
+        }
+        if(!groupe.validateData()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect Data");
+        }
+        if(!comptaService.validateBusiness(groupe)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect Data");
+        }
+        try {
+            ComptaCompteGroupe groupeSaved = comptaService.createGroupe(groupe);
+            return groupeSaved;
+        } catch(Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+    
+    @PutMapping("groupe/{id}")
+    public ComptaCompteGroupe saveGroupe(@PathVariable int id, @Valid @RequestBody ComptaCompte plan) {
+        ComptaCompteGroupe oldGroupe = comptaService.getGroupeById(id);
+        // TODO map plan to oldPlan
+        return comptaService.updateGroupe(oldGroupe);
+    }
+
+    @DeleteMapping("groupe/{id}")
+    public ComptaCompteGroupe deleteGroupe(@PathVariable int id) {
+      // TODO check if exist + if can delete
+      return comptaService.deleteGroupe(id);
+    }
     ////////// Exception /////////
     /// @ExceptionHandler(ComptaNotFoundException.class)
     /// public ResponseEntity<String> handleComptaNotFound(ComptaNotFoundException ex) {

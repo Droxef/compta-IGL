@@ -1,6 +1,7 @@
 package ch.igl.compta.service.api;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,6 +111,23 @@ public class ComptaService {
         Optional<ComptaPlan> plan = comptaPlanRepository.findByName(name);
         if(plan.isPresent()) {
             return plan.get();
+        } else {
+            return null;
+        }
+    }
+
+    public Iterable<ComptaPlan> getPlansActif(boolean open) {
+        if(open) {
+            return comptaPlanRepository.findByIsOpenTrue();
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    public ComptaPlan getLastPlanActif() {
+        Optional<ComptaPlan> currentPlan = comptaPlanRepository.findLastIsOpen();
+        if(currentPlan.isPresent()) {
+            return currentPlan.get();
         } else {
             return null;
         }

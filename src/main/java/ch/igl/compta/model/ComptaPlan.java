@@ -8,7 +8,9 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
@@ -49,12 +51,16 @@ public class ComptaPlan {
 
     private String name;
 
+    private boolean isOpen=true;
+
     @OneToMany(targetEntity=ComptaCompte.class, cascade=CascadeType.ALL, mappedBy="plan")
-    //@JsonManagedReference
+//    @JsonManagedReference
+    @JsonIdentityReference(alwaysAsId = true)
     private List<ComptaCompte> comptes;
 
-    @JsonManagedReference
+//    @JsonManagedReference
     @OneToMany(targetEntity=ComptaCompteGroupe.class, cascade=CascadeType.ALL, mappedBy="plan")
+    @JsonIdentityReference(alwaysAsId = true)
     private List<ComptaCompteGroupe> groupes;
 
     public boolean validateData() {
