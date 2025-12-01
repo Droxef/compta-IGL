@@ -125,13 +125,13 @@ public class ComptaController {
       return comptaService.deletePlan(id);
     }
 
-    @GetMapping("plan/{id}/compte")
+    @GetMapping("plan/{id}/comptes")
     public Iterable<ComptaCompte> getComptesByPlan(@PathVariable int id) {
         ComptaPlan plan = comptaService.getPlanById(id);
         return plan.getComptes();
     }
 
-    @GetMapping("plan/{id}/groupe")
+    @GetMapping("plan/{id}/groupes")
     public Iterable<ComptaCompteGroupe> getGroupesByPlan(@PathVariable int id) {
         ComptaPlan plan = comptaService.getPlanById(id);
         return plan.getGroupes();

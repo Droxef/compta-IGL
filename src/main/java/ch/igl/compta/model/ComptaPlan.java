@@ -29,7 +29,8 @@ import lombok.Data;
 @Table
 @JsonIdentityInfo(
   generator = ObjectIdGenerators.PropertyGenerator.class, 
-  property = "id")
+  property = "id",
+  scope = ComptaPlan.class)
 public class ComptaPlan {
 
     @Id

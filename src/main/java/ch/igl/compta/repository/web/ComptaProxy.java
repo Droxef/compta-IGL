@@ -17,6 +17,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import ch.igl.compta.CustomProperties;
+import ch.igl.compta.model.ComptaCompte;
+import ch.igl.compta.model.ComptaCompteGroupe;
 import ch.igl.compta.model.ComptaPlan;
 import lombok.extern.slf4j.Slf4j;
 
@@ -150,6 +152,36 @@ public class ComptaProxy {
             null,
             ComptaPlan.class);
         log.debug("delete plan call " + response.getStatusCode().toString());
+
+        return response.getBody();
+    }
+
+    public List<ComptaCompte> getComptesByPlanId(final long planId) {
+        String baseApiUrl = props.getApiTest();
+        String getComptaCompteUrl = baseApiUrl + "/compta/plan/" + planId +"/comptes";
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<List<ComptaCompte>> response = restTemplate.exchange(
+            getComptaCompteUrl, 
+            HttpMethod.GET,
+            null,
+            new ParameterizedTypeReference<List<ComptaCompte>>() {});
+        log.debug("get comptes by plan id call " + response.getStatusCode().toString());
+
+        return response.getBody();
+    }
+
+    public List<ComptaCompteGroupe> getGroupesByPlanId(final long planId) {
+        String baseApiUrl = props.getApiTest();
+        String getComptaCompteGroupeUrl = baseApiUrl + "/compta/plan/" + planId +"/groupes";
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<List<ComptaCompteGroupe>> response = restTemplate.exchange(
+            getComptaCompteGroupeUrl, 
+            HttpMethod.GET,
+            null,
+            new ParameterizedTypeReference<List<ComptaCompteGroupe>>() {});
+        log.debug("get groupes by plan id call " + response.getStatusCode().toString());
 
         return response.getBody();
     }

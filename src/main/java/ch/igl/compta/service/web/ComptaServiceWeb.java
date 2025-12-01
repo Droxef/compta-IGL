@@ -11,6 +11,9 @@ import java.util.List;
 
 import org.springframework.data.util.Pair;
 
+import ch.igl.compta.model.ComptaCompte;
+import ch.igl.compta.model.ComptaCompteGroupe;
+
 @Data
 @Service
 public class ComptaServiceWeb {
@@ -59,5 +62,13 @@ public class ComptaServiceWeb {
     public ComptaPlan closePlan(final long id) {
         throw new UnsupportedOperationException("Not implemented yet");
 //        return comptaProxy.closePlan(id);
+    }
+
+    public List<ComptaCompte> getComptesByPlanId(final long planId) {
+        return comptaProxy.getComptesByPlanId(planId);
+    }
+
+    public List<ComptaCompteGroupe> getGroupesByPlanId(final long planId) {
+        return comptaProxy.getGroupesByPlanId(planId);
     }
 }

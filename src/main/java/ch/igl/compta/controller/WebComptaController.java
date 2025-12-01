@@ -1,5 +1,6 @@
 package ch.igl.compta.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,10 +13,13 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import ch.igl.compta.model.ComptaLine;
 import ch.igl.compta.model.ComptaPlan;
 import ch.igl.compta.service.web.ComptaServiceWeb;
 
@@ -82,6 +86,22 @@ public class WebComptaController {
             attribute.addFlashAttribute("planActif", service.getLastPlanActif());
         }
         return "redirect:/compta/plan";
+    }
+
+    @GetMapping("/plan/comptes")
+    public String getPlanComptes(HttpServletRequest request, Model model, RedirectAttributes attribute) {
+        request.getSession().setAttribute("previousTab", "comptaPlanForm");
+        ComptaPlan plan = (ComptaPlan)model.getAttribute("planActif");
+        if(plan == null) {
+            throw new IllegalStateException("No active plan in session");
+        }
+        request.getSession().setAttribute("previousObject", plan);
+        List<ComptaLine> comptes = new ArrayList<>();
+        comptes.addAll(service.getComptesByPlanId(plan.getId()));
+        comptes.addAll(service.getGroupesByPlanId(plan.getId()));
+        comptes.sort((m1, m2) -> StringUtils.compare(m1.getNumero().toString(), m2.getNumero().toString()));
+        model.addAttribute("comptables", comptes);
+        return "comptaPlanCompteForm";
     }
 
     @PostMapping("/savePlan")

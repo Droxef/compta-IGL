@@ -1,0 +1,163 @@
+!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhml" xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+            integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+            integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+        <link rel="stylesheet" href="/dist/styles/webawesome.css" />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="manifest" href="/manifest.webmanifest" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+        <script src="https://kit.webawesome.com/9fcf948dbdcc4bed.js" crossorigin="anonymous"></script>
+        <script src="https://kit.fontawesome.com/c955a53ade.js" crossorigin="anonymous"></script>
+        <script
+            src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+        <title>IGL compta webapp</title>
+        <link rel="stylesheet" href="styles.css" />
+        <style>
+            body {
+                padding-top: 50px;
+            }
+
+            html {
+                font-size: 16px !important;
+            }
+
+            nav.margin-top {
+                margin-top: 0.5rem;
+            }
+
+            .special {
+                padding-top: 50px;
+            }
+
+            a.active {
+                color: red !important;
+                text-decoration: underline;
+            }
+            #modal {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100%;
+                width: 100%;
+                background-color: rgba(0,0,0,.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .modal__window {
+                position: relative;
+                background-color: white;
+                padding: 4em 2em;
+            }
+
+            .modal__close {
+                position: absolute;
+                top: -30px;
+                right: 0;
+            }
+
+            .compte-groupe {
+                font-weight: bold;
+                background-color: #f8f9fa;
+            }
+            .groupe-1 { background-color: #d6d8db !important; }
+            .groupe-2 { background-color: #c4c7cc !important; }
+            .groupe-3 { background-color: #b3b6bb !important; }
+        </style>
+    </head>
+
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+            <a class="navbar-brand me-5" href="#">
+                <img th:src="@{/images/Logo.svg}" width="40" alt="logo" />
+            </a>
+            <a class="navbar-brand me-5" href="/back">
+                <i class="fa-solid fa-circle-arrow-left fa-2x"></i>
+            </a>
+            <div class="container">
+                
+                <!-- Links always visible, no collapse -->
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="fa-solid fa-house me-1"></i> Accueil
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/personne">Système de gestion des personnes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/compta">Système de gestion de la comptabilité</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <nav class="navbar navbar-expand-sm bg-light">
+            <div class="container">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/compta/search">Recherche des écritures</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/compta/plan">Gestion des plans</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/compta/config">Configuration</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <div class="container mt-4">
+            <h2>Comptes Comptables - plan <span th:text="${planActif.name}"></span></h2>
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Numéro</th>
+                        <th>Titre</th>
+                        <th>Solde d'entrée</th>
+                        <th>Budget</th>
+                        <th>Solde courant</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="item : ${comptables}"
+                    th:class="${item.isGroupe()} ? 'compte-groupe groupe-' + ${item.numero.length()} : ''">
+                    <td th:text="${item.numero}"></td>
+                    <td th:text="${item.description}"></td>
+                    <td>
+                        <span th:if="${!item.isGroupe()}"
+                              th:text="${#numbers.formatDecimal(item.startSolde, 1, 2)}"></span>
+                    </td>
+                    <td>
+                        <span th:if="${!item.isGroupe()}"
+                              th:text="${#numbers.formatDecimal(item.budgetPlan, 1, 2)}"></span>
+                    </td>
+                    <td>
+                        <span th:if="${!item.isGroupe()}"
+                              th:text="${#numbers.formatDecimal(item.endSolde, 1, 2)}"></span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div th:if="${planActif != null}">
+                <a th:href="@{/compta/plan/comptes/addCompte}"><button class="btn btn-info">Ajouter un compte</button></a>
+                <a th:href="@{/compta/plan/comptes/addGroupe}"><button class="btn btn-info">Ajouter un groupe</button></a>
+            </div>
+        </div>
+        </body>
+</html>

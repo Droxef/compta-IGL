@@ -7,10 +7,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import jakarta.persistence.CascadeType;
@@ -31,7 +29,7 @@ import lombok.Data;
 @JsonIdentityInfo(
   generator = ObjectIdGenerators.PropertyGenerator.class, 
   property = "id")
-public class ComptaCompteGroupe {
+public class ComptaCompteGroupe implements ComptaLine {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -71,6 +69,11 @@ public class ComptaCompteGroupe {
     private Set<ComptaCompte> comptes;
 
     public boolean validateData() {
+        return true;
+    }
+
+    @Override
+    public boolean isGroupe() {
         return true;
     }
 }
