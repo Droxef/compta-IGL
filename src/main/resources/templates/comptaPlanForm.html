@@ -170,7 +170,7 @@
                                 </td>
                                 <td>
                                     <span th:if="${planActif.dateCreation != null}"
-                                        th:title="${planActif.dateCreation}"
+                                        th:title="${'Création: ' + #temporals.format(planActif.dateCreation, 'dd/MM/yyyy HH:mm:ss') + '<br>Modification: '}"
                                         data-bs-toggle="tooltip"
                                         style="cursor: pointer; text-decoration: underline dotted;">
                                         Voir les métadonnées
@@ -196,7 +196,7 @@
             </div>
         </div>
 
-        <div th:if="${newPlan} or ${updatePlan}" id = "modal" class="container special">
+        <div th:if="${newPlan} or ${updatePlan}" id = "modal" class="special">
 
             <div class="modal__window">
                 <a class="modal__close" th:href="@{/compta/plan}"><i class="fa-solid fa-xmark fa-2x"></i></a>

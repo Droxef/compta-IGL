@@ -1,5 +1,8 @@
 package ch.igl.compta.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -7,26 +10,25 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import jakarta.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
-
+import ch.igl.compta.model.ComptaCompte;
+import ch.igl.compta.model.ComptaCompteGroupe;
 import ch.igl.compta.model.ComptaLine;
 import ch.igl.compta.model.ComptaPlan;
 import ch.igl.compta.service.web.ComptaServiceWeb;
+import jakarta.servlet.http.HttpServletRequest;
 
 
 @Controller
 @RequestMapping("/compta")
-@SessionAttributes({"planActif", "planInfos"})
+@SessionAttributes({"planActif", "planInfos", "comptables"})
 public class WebComptaController {
 
     @Autowired
@@ -104,11 +106,60 @@ public class WebComptaController {
         return "comptaPlanCompteForm";
     }
 
+    @GetMapping("/plan/comptes/addCompte")
+    public String addCompte(HttpServletRequest request, Model model, RedirectAttributes attribute) {
+        ComptaCompte compte = new ComptaCompte();
+        model.addAttribute("compte", compte);
+        model.addAttribute("newCompte", true);
+        return "comptaPlanCompteForm";
+    }
+
+    @GetMapping("/plan/comptes/compte/{id}")
+    public String editCompte(HttpServletRequest request, Model model, @PathVariable final int id, RedirectAttributes attribute) {
+        ComptaCompte compte = service.getCompteById(id);
+        model.addAttribute("compte", compte);
+        model.addAttribute("updateCompte", true);
+        return "comptaPlanCompteForm";
+    }
+
+
+    @GetMapping("/plan/comptes/addGroupe")
+    public String addGroupe(HttpServletRequest request, Model model, RedirectAttributes attribute) {
+        ComptaCompteGroupe groupe = new ComptaCompteGroupe();
+        model.addAttribute("groupe", groupe);
+        model.addAttribute("newGroupe", true);
+        return "comptaPlanCompteForm";
+    }
+
+    @GetMapping("/plan/comptes/groupe/{id}")
+    public String editGroupe(HttpServletRequest request, Model model, @PathVariable final int id, RedirectAttributes attribute) {
+        ComptaCompteGroupe groupe = service.getGroupeById(id);
+        model.addAttribute("groupe", groupe);
+        model.addAttribute("updateGroupe", true);
+        return "comptaPlanCompteForm";
+    }
+
     @PostMapping("/savePlan")
     public ModelAndView savePlan(Model model, @ModelAttribute ComptaPlan plan, BindingResult bresult, RedirectAttributes redirectAttribute) {
         plan = service.savePlan(plan);
         redirectAttribute.addFlashAttribute("planActif", plan);
         return new ModelAndView("redirect:/compta/plan");
+    }
+
+    @PostMapping("/plan/saveCompte")
+    public ModelAndView saveCompte(Model model, @ModelAttribute ComptaCompte compte, BindingResult bresult, RedirectAttributes redirectAttribute) {
+        ComptaPlan plan = (ComptaPlan) model.getAttribute("planActif");
+        compte.setPlan(plan);
+        compte = service.saveCompte(compte);
+        return new ModelAndView("redirect:/compta/plan/comptes");
+    }
+
+    @PostMapping("/plan/saveGroupe")
+    public ModelAndView saveGroupe(Model model, @ModelAttribute ComptaCompteGroupe groupe, BindingResult bresult, RedirectAttributes redirectAttribute) {
+        ComptaPlan plan = (ComptaPlan) model.getAttribute("planActif");
+        groupe.setPlan(plan);
+        groupe = service.saveGroupe(groupe);
+        return new ModelAndView("redirect:/compta/plan/comptes");
     }
 
     @GetMapping("/config")

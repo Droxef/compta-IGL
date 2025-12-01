@@ -1,18 +1,16 @@
 package ch.igl.compta.service.web;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import ch.igl.compta.model.ComptaPlan;
-import ch.igl.compta.repository.web.ComptaProxy;
-import lombok.Data;
-
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
+import org.springframework.stereotype.Service;
 
 import ch.igl.compta.model.ComptaCompte;
 import ch.igl.compta.model.ComptaCompteGroupe;
+import ch.igl.compta.model.ComptaPlan;
+import ch.igl.compta.repository.web.ComptaProxy;
+import lombok.Data;
 
 @Data
 @Service
@@ -70,5 +68,45 @@ public class ComptaServiceWeb {
 
     public List<ComptaCompteGroupe> getGroupesByPlanId(final long planId) {
         return comptaProxy.getGroupesByPlanId(planId);
+    }
+
+    public ComptaCompte getCompteById(final long id) {
+        return comptaProxy.getCompteById(id);
+    }
+
+    public ComptaCompte saveCompte(ComptaCompte c) {
+        ComptaCompte compte;
+
+        if(c.getId() == null) {
+            compte = comptaProxy.createCompte(c);
+        } else {
+            compte = comptaProxy.updateCompte(c);
+        }
+
+        return compte;
+    }
+
+    public ComptaCompteGroupe getGroupeById(final long id) {
+        return comptaProxy.getGroupeById(id);
+    }
+
+    public ComptaCompteGroupe saveGroupe(ComptaCompteGroupe g) {
+        ComptaCompteGroupe groupe;
+
+        if(g.getId() == null) {
+            groupe = comptaProxy.createGroupe(g);
+        } else {
+            groupe = comptaProxy.updateGroupe(g);
+        }
+
+        return groupe;
+    }
+
+    public void deleteCompte(final long id) {
+        comptaProxy.deleteCompte(id);
+    }
+
+    public void deleteGroupe(final long id) {
+        comptaProxy.deleteGroupe(id);
     }
 }

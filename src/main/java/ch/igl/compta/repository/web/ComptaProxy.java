@@ -185,4 +185,128 @@ public class ComptaProxy {
 
         return response.getBody();
     }
+
+    public ComptaCompte getCompteById(final long id) {
+        String baseApiUrl = props.getApiTest();
+        String getComptaCompteUrl = baseApiUrl + "/compta/compte/" + id;
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<ComptaCompte> response = restTemplate.exchange(
+            getComptaCompteUrl, 
+            HttpMethod.GET,
+            null,
+            ComptaCompte.class);
+        log.debug("get compte by id call " + response.getStatusCode().toString());
+
+        return response.getBody();
+    }
+
+    public ComptaCompte createCompte(ComptaCompte c) {
+        String baseApiUrl = props.getApiTest();
+        String getComptaCompteUrl = baseApiUrl + "/compta/compte";
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpEntity<ComptaCompte> request = new HttpEntity<>(c);
+        ResponseEntity<ComptaCompte> response = restTemplate.exchange(
+            getComptaCompteUrl, 
+            HttpMethod.POST,
+            request,
+            ComptaCompte.class);
+        log.debug("create compte call " + response.getStatusCode().toString());
+
+        return response.getBody();
+    }
+
+    public ComptaCompte updateCompte(ComptaCompte c) {
+        String baseApiUrl = props.getApiTest();
+        String getComptaCompteUrl = baseApiUrl + "/compta/compte/" + c.getId();
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpEntity<ComptaCompte> request = new HttpEntity<>(c);
+        ResponseEntity<ComptaCompte> response = restTemplate.exchange(
+            getComptaCompteUrl, 
+            HttpMethod.PUT,
+            request,
+            ComptaCompte.class);
+        log.debug("modify compte call " + response.getStatusCode().toString());
+
+        return response.getBody();
+    }
+
+    public ComptaCompte deleteCompte(final long id) {
+        String baseApiUrl = props.getApiTest();
+        String getComptaCompteUrl = baseApiUrl + "/compta/compte/" + id;
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<ComptaCompte> response = restTemplate.exchange(
+            getComptaCompteUrl, 
+            HttpMethod.DELETE,
+            null,
+            ComptaCompte.class);
+        log.debug("delete compte call " + response.getStatusCode().toString());
+
+        return response.getBody();
+    }
+
+    public ComptaCompteGroupe getGroupeById(final long id) {
+        String baseApiUrl = props.getApiTest();
+        String getComptaCompteGroupeUrl = baseApiUrl + "/compta/groupe/" + id;
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<ComptaCompteGroupe> response = restTemplate.exchange(
+            getComptaCompteGroupeUrl, 
+            HttpMethod.GET,
+            null,
+            ComptaCompteGroupe.class);
+        log.debug("get groupe by id call " + response.getStatusCode().toString());
+
+        return response.getBody();
+    }
+
+    public ComptaCompteGroupe createGroupe(ComptaCompteGroupe g) {
+        String baseApiUrl = props.getApiTest();
+        String getComptaCompteGroupeUrl = baseApiUrl + "/compta/groupe";
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpEntity<ComptaCompteGroupe> request = new HttpEntity<>(g);
+        ResponseEntity<ComptaCompteGroupe> response = restTemplate.exchange(
+            getComptaCompteGroupeUrl, 
+            HttpMethod.POST,
+            request,
+            ComptaCompteGroupe.class);
+        log.debug("create groupe call " + response.getStatusCode().toString());
+
+        return response.getBody();
+    }
+
+    public ComptaCompteGroupe updateGroupe(ComptaCompteGroupe g) {
+        String baseApiUrl = props.getApiTest();
+        String getComptaCompteGroupeUrl = baseApiUrl + "/compta/groupe/" + g.getId();
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpEntity<ComptaCompteGroupe> request = new HttpEntity<>(g);
+        ResponseEntity<ComptaCompteGroupe> response = restTemplate.exchange(
+            getComptaCompteGroupeUrl, 
+            HttpMethod.PUT,
+            request,
+            ComptaCompteGroupe.class);
+        log.debug("modify groupe call " + response.getStatusCode().toString());
+
+        return response.getBody();
+    }
+
+    public ComptaCompteGroupe deleteGroupe(final long id) {
+        String baseApiUrl = props.getApiTest();
+        String getComptaCompteGroupeUrl = baseApiUrl + "/compta/groupe/" + id;
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<ComptaCompteGroupe> response = restTemplate.exchange(
+            getComptaCompteGroupeUrl, 
+            HttpMethod.DELETE,
+            null,
+            ComptaCompteGroupe.class);
+        log.debug("delete groupe call " + response.getStatusCode().toString());
+
+        return response.getBody();
+    }
 }

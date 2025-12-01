@@ -74,9 +74,9 @@
                 font-weight: bold;
                 background-color: #f8f9fa;
             }
-            .groupe-1 { background-color: #d6d8db !important; }
-            .groupe-2 { background-color: #c4c7cc !important; }
-            .groupe-3 { background-color: #b3b6bb !important; }
+            .groupe-1 { --bs-table-bg-type: #b3b6bb  !important; --bs-table-striped-bg: #b3b6bb  !important; }
+            .groupe-2 { --bs-table-bg-type: #c4c7cc  !important; --bs-table-striped-bg: #c4c7cc  !important; }
+            .groupe-3 { --bs-table-bg-type: #d6d8db  !important; --bs-table-striped-bg: #d6d8db  !important; }
         </style>
     </head>
 
@@ -125,18 +125,19 @@
         <div class="container mt-4">
             <h2>Comptes Comptables - plan <span th:text="${planActif.name}"></span></h2>
             <table class="table table-striped table-hover">
-                <thead class="table-dark">
+                <thead class="table-primary">
                     <tr>
                         <th>Numéro</th>
                         <th>Titre</th>
                         <th>Solde d'entrée</th>
                         <th>Budget</th>
                         <th>Solde courant</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:each="item : ${comptables}"
-                    th:class="${item.isGroupe()} ? 'compte-groupe groupe-' + ${item.numero.length()} : ''">
+                    th:class="${item.isGroupe()} ? 'compte-groupe groupe-' + ${#strings.toString(item.numero).length()} : ''">
                     <td th:text="${item.numero}"></td>
                     <td th:text="${item.description}"></td>
                     <td>
@@ -151,12 +152,95 @@
                         <span th:if="${!item.isGroupe()}"
                               th:text="${#numbers.formatDecimal(item.endSolde, 1, 2)}"></span>
                     </td>
+                    <td>
+                        <a th:href="@{'/compta/plan/comptes/' + ${item.isGroupe() ? 'groupe' : 'compte'} + '/' + ${item.id}}"><button class="btn btn-info">Modifier</button></a>
+                    </td>
                 </tr>
                 </tbody>
             </table>
             <div th:if="${planActif != null}">
                 <a th:href="@{/compta/plan/comptes/addCompte}"><button class="btn btn-info">Ajouter un compte</button></a>
                 <a th:href="@{/compta/plan/comptes/addGroupe}"><button class="btn btn-info">Ajouter un groupe</button></a>
+            </div>
+        </div>
+
+        <div th:if="${newCompte} or ${updateCompte}" id = "modal" class="special">
+
+            <div class="modal__window">
+                <a class="modal__close" th:href="@{/compta/plan/comptes}"><i class="fa-solid fa-xmark fa-2x"></i></a>
+                <h2 class="h2" th:if="${updateCompte}">Modification d'un compte</h2>
+                <h2 class="h2" th:unless="${updateCompte}">Ajout d'un nouveau compte</h2>
+                <div>
+                    <form method="post"
+                        th:action="@{/compta/plan/saveCompte}" th:object="${compte}">
+                        <input type="hidden" th:field="*{id}" id="idInput">
+                        <!--<input type="hidden" th:field="${planActif.id}" id="planInput">-->
+                        <div class="form-group">
+                            <label for="numeroInput">Numéro</label> 
+                            <input
+                                type="text" th:field="*{numero}" class="form-control" id="numeroInput"
+                                aria-describedby="numeroHelp" placeholder="Saisir le numéro"> <small
+                                id="numeroHelp" class="form-text text-muted">Indiquez le numéro du compte.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="descriptionInput">Description</label> 
+                            <!-- TODO format input date-->
+                            <input
+                                type="text" th:field="*{description}" class="form-control" id="descriptionInput"
+                                aria-describedby="descriptionHelp" placeholder="Saisir la description"> <small
+                                id="descriptionHelp" class="form-text text-muted">Merci d'entrer la description.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="startSoldeInput">Solde de départ</label> 
+                            <input
+                                type="number" th:field="*{startSolde}" class="form-control" id="startSoldeInput"
+                                aria-describedby="startSoldeHelp" placeholder="Saisir le solde de départ"> <small
+                                id="startSoldeHelp" class="form-text text-muted">Merci d'entrer le solde de départ.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="budgetPlanInput">Budget</label> 
+                            <input
+                                type="number" th:field="*{budgetPlan}" class="form-control" id="budgetPlanInput"
+                                aria-describedby="budgetPlanHelp" placeholder="Saisir le budget"> <small
+                                id="budgetPlanHelp" class="form-text text-muted">Merci d'entrer le budget.</small>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" th:text="${newCompte} ? Créer : Modifier"></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${newGroupe} or ${updateGroupe}" id = "modal" class="special">
+
+            <div class="modal__window">
+                <a class="modal__close" th:href="@{/compta/plan/comptes}"><i class="fa-solid fa-xmark fa-2x"></i></a>
+                <h2 class="h2" th:if="${updateGroupe}">Modification d'un groupe</h2>
+                <h2 class="h2" th:unless="${updateGroupe}">Ajout d'un nouveau groupe</h2>
+                <div>
+                    <form method="post"
+                        th:action="@{/compta/plan/saveGroupe}" th:object="${groupe}">
+                        <input type="hidden" th:field="*{id}" id="idInput">
+                        <!--<input type="hidden" th:field="${planActif.id}" id="planInput">-->
+                        <div class="form-group">
+                            <label for="numeroInput">Numéro</label> 
+                            <input
+                                type="text" th:field="*{numero}" class="form-control" id="numeroInput"
+                                aria-describedby="numeroHelp" placeholder="Saisir le numéro"> <small
+                                id="numeroHelp" class="form-text text-muted">Indiquez le numéro du compte.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="descriptionInput">Description</label> 
+                            <!-- TODO format input date-->
+                            <input
+                                type="text" th:field="*{description}" class="form-control" id="descriptionInput"
+                                aria-describedby="descriptionHelp" placeholder="Saisir la description"> <small
+                                id="descriptionHelp" class="form-text text-muted">Merci d'entrer la description.</small>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary" th:text="${newGroupe} ? Créer : Modifier"></button>
+                    </form>
+                </div>
             </div>
         </div>
         </body>
