@@ -19,15 +19,15 @@ public class PersonneServiceWeb {
         return personneProxy.getPersonne(id);
     }
 
-    public Iterable<Personne> getAllPersonnes() {
-        return personneProxy.getAllPersonnes();
+    public Iterable<Personne> getAllPersonnes(String token) {
+        return personneProxy.getAllPersonnes(token);
     }
 
-    public Personne savePersonne(Personne p) {
+    public Personne savePersonne(String token, Personne p) {
         Personne personne;
 
         if(p.getId() == null) {
-            personne = personneProxy.createPersonne(p);
+            personne = personneProxy.createPersonne(token, p);
         } else {
             personne = personneProxy.updatePersonne(p);
         }

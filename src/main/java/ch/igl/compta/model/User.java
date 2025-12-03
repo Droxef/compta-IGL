@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -14,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
@@ -35,11 +37,16 @@ public class User {
     @UpdateTimestamp(source = SourceType.DB)
     private LocalDateTime dateModification;
 
-    private String userName;
+    @NotBlank(message="nom obligatoire")
+    @Column(unique=true)
+    private String username;
 
+    @NotBlank(message="mot de passe obligatoire")
     private String passHash;
 
     private String email;
+
+//    private List<Role> roles;
 
     @OneToOne
     @JoinColumn(name="personneId")

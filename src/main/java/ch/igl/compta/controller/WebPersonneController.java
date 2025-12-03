@@ -1,12 +1,14 @@
 package ch.igl.compta.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.HttpSessionRequiredException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import ch.igl.compta.model.Personne;
 import ch.igl.compta.service.web.PersonneServiceWeb;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 
 
@@ -36,8 +39,22 @@ public class WebPersonneController {
     }
 
     @GetMapping("")
-    public String getPersonne(HttpServletRequest request, Model model, RedirectAttributes attribute) {
-        Iterable<Personne> personnes = personneService.getAllPersonnes();
+    public String getPersonne(HttpServletRequest request, Model model, RedirectAttributes attribute) throws HttpSessionRequiredException {
+        String jwt = (String) request.getSession().getAttribute("jwt");
+
+        if (jwt == null) {
+            jwt = Arrays.stream(request.getCookies())
+                .filter(c -> "X-Auth-Token".equals(c.getName()))
+                .findFirst()
+                .map(Cookie::getValue)
+                .orElse(null);
+        }
+
+        if (jwt == null) {
+            throw new HttpSessionRequiredException("JWT manquant");
+        }
+
+        Iterable<Personne> personnes = personneService.getAllPersonnes(jwt);
         model.addAttribute("personnes", personnes);
         // TODO understand this (only for redirect i think)
         attribute.addAttribute("personnes", personnes);
@@ -52,8 +69,22 @@ public class WebPersonneController {
     }
 
     @PostMapping("/savePersonne")
-    public ModelAndView saveEmployee(Model model, @ModelAttribute Personne personne, BindingResult bresult, RedirectAttributes redirectAttribute) {
-        personneService.savePersonne(personne);
+    public ModelAndView saveEmployee(Model model, @ModelAttribute Personne personne, HttpServletRequest request, BindingResult bresult, RedirectAttributes redirectAttribute) throws HttpSessionRequiredException {
+        String jwt = (String) request.getSession().getAttribute("jwt");
+
+        if (jwt == null) {
+            jwt = Arrays.stream(request.getCookies())
+                .filter(c -> "X-Auth-Token".equals(c.getName()))
+                .findFirst()
+                .map(Cookie::getValue)
+                .orElse(null);
+        }
+
+        if (jwt == null) {
+            throw new HttpSessionRequiredException("JWT manquant");
+        }
+
+        personneService.savePersonne(jwt, personne);
         return new ModelAndView("redirect:/personne");
     }
     

@@ -3,9 +3,13 @@ package ch.igl.compta.repository.web;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.client.RestTemplate;
 
 import ch.igl.compta.CustomProperties;
@@ -19,27 +23,34 @@ public class PersonneProxy {
     @Autowired
     private CustomProperties props;
 
-    public Iterable<Personne> getAllPersonnes() {
+    public Iterable<Personne> getAllPersonnes(String token) {
         String baseApiUrl = props.getApiTest();
         String getPersonneUrl = baseApiUrl + "/personnes";
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + token);
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+
+        // TODO remplacer par webclient
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<Iterable<Personne>> response = restTemplate.exchange(
             getPersonneUrl, 
             HttpMethod.GET,
-            null,
+            entity,
             new ParameterizedTypeReference<Iterable<Personne>>() {});
         log.debug("get personnes call " + response.getStatusCode().toString());
 
         return response.getBody();
     }
 
-    public Personne createPersonne(Personne p) {
+    public Personne createPersonne(String token, Personne p) {
         String baseApiUrl = props.getApiTest();
         String getPersonneUrl = baseApiUrl + "/personnes";
 
         RestTemplate restTemplate = new RestTemplate();
-        HttpEntity<Personne> request = new HttpEntity<>(p);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + token);
+        HttpEntity<Personne> request = new HttpEntity<>(p, headers);
         ResponseEntity<Personne> response = restTemplate.exchange(
             getPersonneUrl, 
             HttpMethod.POST,
@@ -67,6 +78,7 @@ public class PersonneProxy {
     }
 
     public Personne getPersonne(int id) {
+        // , @RequestHeader(value="X-Auth-Token", required=false) String token, @SessionAttribute(value="jwt", required=false) String jwt
         String baseApiUrl = props.getApiTest();
         String getPersonneUrl = baseApiUrl + "/personnes/" + id;
 

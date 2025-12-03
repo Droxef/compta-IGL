@@ -18,4 +18,10 @@ public class ApiController {
     public String hello(@RequestParam(value = "name", defaultValue = "World") String name) {
         return String.format("Hello %s!", name);
     }
+
+    // move to admnin
+    @GetMapping("/users")
+    public String users() {
+        return "test";
+    }
 }
